@@ -21,28 +21,23 @@ const client = new Client({
  *
  * Lastly, remove the password field from every report before returning them all.
  */
-async function getOpenReports({
-  id,
-  title,
-  location,
-  description,
-  password,
-  isOpen,
-  expirationDate,
-}) {
+async function getOpenReports() {
   try {
     const {
-      rows: [reports],
+      rows: reports,
     } = await client.query(`
-    SELECT * FROM reports,
+    SELECT * FROM reports
     WHERE "isOpen" = true;
  `);
+ console.log(reports, "reports")
     const {
-      rows: [comments],
+      rows: comments,
     } = await client.query(`
-    SELECT comments.* FROM comments,
-    WHERE "reportId" ${reports.map}
-    `);
+    SELECT * FROM comments
+    WHERE "reportId" IN ${reports.map(report => report.id ).join(", ")};
+      `);
+    console.log(reports, "get open reports")
+    return reports;
 
     // first load all of the reports which are open
 
@@ -178,5 +173,5 @@ async function createReportComment(reportId, commentFields) {
   }
 }
 
-module.exports = { client, createReport };
+module.exports = { client, createReport, getOpenReports, createReportComment, closeReport, _getReport };
 // export the client and all database functions below
