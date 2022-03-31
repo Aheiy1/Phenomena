@@ -34,7 +34,7 @@ async function getOpenReports() {
       rows: comments,
     } = await client.query(`
     SELECT * FROM comments
-    WHERE "reportId" IN ${reports.map(report => report.id ).join(", ")};
+    WHERE "reportId" IN( ${reports.map(report => report.id ).join(", ")});
       `);
     console.log(reports, "get open reports")
     return reports;
