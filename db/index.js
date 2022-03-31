@@ -1,5 +1,6 @@
 // Require the Client constructor from the pg package
 const { Client } = require("pg");
+const { rows } = require("pg/lib/defaults");
 // Create a constant, CONNECTION_STRING, from either process.env.DATABASE_URL or postgres://localhost:5432/phenomena-dev
 const client = new Client({
   connectionString:
@@ -184,8 +185,40 @@ async function closeReport(reportId, password) {
  */
 async function createReportComment(reportId, commentFields) {
   // read off the content from the commentFields
-
+  const content = commentFields.content;
+  console.log(await _getReport(reportId), "report id from create");
   try {
+    const report = await _getReport(reportId);
+    if (!report) {
+      throw Error("That report does not exist, no comment has been made");
+    }
+    if (!report.isOpen) {
+      throw Error("That report has been closed, no comment has been made");
+    }
+    if (Date.parse(report.expirationDate) < new Date()) {
+      throw Error(
+        "The discussion time on this report has expired, no comment has been made"
+      );
+    }
+    const {
+      rows: [comment],
+    } = await client.query(
+      `INSERT INTO comments("reportId", content)
+         VALUES($1, $2)
+         RETURNING *
+      `,
+      [reportId, content]
+    );
+    await client.query(` 
+      UPDATE reports
+      SET "expirationDate" = CURRENT_TIMESTAMP + interval '1 day'
+      WHERE id=${reportId}
+      RETURNING *;
+      `);
+    console.log(content, "ommentFields.content ");
+    console.log(comment, "comments from reports");
+
+    return comment;
     // grab the report we are going to be commenting on
     // if it wasn't found, throw an error saying so
     // if it is not open, throw an error saying so
