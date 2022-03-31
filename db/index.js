@@ -23,20 +23,24 @@ const client = new Client({
  */
 async function getOpenReports() {
   try {
-    const {
-      rows: reports,
-    } = await client.query(`
+    const { rows: reports } = await client.query(`
     SELECT * FROM reports
     WHERE "isOpen" = true;
  `);
- console.log(reports, "reports")
-    const {
-      rows: comments,
-    } = await client.query(`
+    // console.log(reports, "reports");
+    const { rows: comments } = await client.query(`
     SELECT * FROM comments
-    WHERE "reportId" IN( ${reports.map(report => report.id ).join(", ")});
+    WHERE "reportId" IN( ${reports.map((report) => report.id).join(", ")});
       `);
-    console.log(reports, "get open reports")
+    // console.log(reports, "get open reports");
+
+    reports.forEach((report) => {
+      report.comments = comments.reportId;
+      // console.log(comments, "seeing how comment looks")
+      report.isExpired = Date.parse(report.expirationDate) < new Date();
+      delete report.password;
+    });
+
     return reports;
 
     // first load all of the reports which are open
@@ -68,12 +72,7 @@ async function getOpenReports() {
  * Make sure to remove the password from the report object
  * before returning it.
  */
-async function createReport({
-  title,
-  location,
-  description,
-  password
-}) {
+async function createReport({ title, location, description, password }) {
   // Get all of the fields from the passed in object
   try {
     const {
@@ -84,7 +83,7 @@ async function createReport({
   VALUES($1,$2,$3,$4)
   RETURNING *;
   `,
-      [title, location, description, password,]
+      [title, location, description, password]
     );
     delete report.password;
 
@@ -116,6 +115,14 @@ async function createReport({
  */
 async function _getReport(reportId) {
   try {
+    const {
+      rows: [report],
+    } = await client.query(`
+    SELECT * FROM reports
+    WHERE id = ${reportId};
+    `);
+    console.log(report, "from helper function");
+    return report;
     // SELECT the report with id equal to reportId
     // return the report
   } catch (error) {
@@ -133,7 +140,26 @@ async function _getReport(reportId) {
  * If nothing is updated this way, throw an error
  */
 async function closeReport(reportId, password) {
+  const closedReport = await _getReport(reportId);
+  console.log(closedReport, "helper function");
   try {
+    if (!closedReport) {
+      throw Error("Report does not exist with that id");
+    }
+    if (password !== closedReport.password) {
+      throw Error("Password incorrect for this report, please try again");
+    }
+    if (closedReport.isOpen === false) {
+      throw Error("This report has already been closed");
+    } else {
+      await client.query(`
+      UPDATE reports
+      SET "isOpen"='false'
+      WHERE id = ${reportId}
+      `);
+    }
+
+    return { message: "Report successfully closed!" };
     // First, actually grab the report with that id
     // If it doesn't exist, throw an error with a useful message
     // If the passwords don't match, throw an error
@@ -173,5 +199,12 @@ async function createReportComment(reportId, commentFields) {
   }
 }
 
-module.exports = { client, createReport, getOpenReports, createReportComment, closeReport, _getReport };
+module.exports = {
+  client,
+  createReport,
+  getOpenReports,
+  createReportComment,
+  closeReport,
+  _getReport,
+};
 // export the client and all database functions below
