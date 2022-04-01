@@ -32,14 +32,14 @@ describe('API', () => {
   afterAll(async() => {
     await client.end();
   })
-  describe('server', () => {
+ xdescribe('server', () => {
     beforeAll(async() => {
     })
     it('Responds to requests', async () => {
       await expect(axios.get(`${API_URL}/foo-bar`)).rejects.toThrow('Request failed with status code 404');
     });
   });
-  describe('GET request for /api/reports', () => {
+  xdescribe('GET request for /api/reports', () => {
     let response, allReportsResponse, allReportsQueried, singleReportResponse, singleReportQueried;
     beforeAll(async() => {
       const {data} = await axios.get(`${API_URL}/api/reports`);
