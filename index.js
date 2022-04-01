@@ -32,11 +32,11 @@ server.use("/api", apiRouter)
 
 
 server.use((error, req, res, next) => {
-res.status(404).send("Error this page doesn't exist");
+res.status(404).send(error, "Error this page doesn't exist");
  });
 // Create custom 404 handler that sets the status code to 404.
 server.use((error, req, res, next)=> {
-    res.status(500).send({error})
+    res.status(500).send(error)
     console.log(error, "500 error")
 })
 // Create custom error handling that sets the status code to 500
