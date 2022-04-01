@@ -33,10 +33,12 @@ async function getOpenReports() {
     SELECT * FROM comments
     WHERE "reportId" IN( ${reports.map((report) => report.id).join(", ")});
       `);
-    // console.log(reports, "get open reports");
+      console.log(comments, "comments from getopen reports")
+    console.log(reports, "New reports");
 
     reports.forEach((report) => {
-      report.comments = comments.reportId;
+      report.comments = comments.filter(comment => comment.reportId === report.id)
+      console.log(comments.reportId, "comments from reports")
       // console.log(comments, "seeing how comment looks")
       report.isExpired = Date.parse(report.expirationDate) < new Date();
       delete report.password;
@@ -122,7 +124,7 @@ async function _getReport(reportId) {
     SELECT * FROM reports
     WHERE id = ${reportId};
     `);
-    console.log(report, "from helper function");
+    // console.log(report, "from helper function");
     return report;
     // SELECT the report with id equal to reportId
     // return the report
@@ -215,8 +217,8 @@ async function createReportComment(reportId, commentFields) {
       WHERE id=${reportId}
       RETURNING *;
       `);
-    console.log(content, "ommentFields.content ");
-    console.log(comment, "comments from reports");
+    // console.log(content, "ommentFields.content ");
+    // console.log(comment, "comments from reports");
 
     return comment;
     // grab the report we are going to be commenting on

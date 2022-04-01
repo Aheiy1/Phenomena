@@ -20,7 +20,7 @@ const apiSetup = async () => {
   }));
 }
 
-describe('API', () => {
+xdescribe('API', () => {
   const reportToPost = { title: "Disappearing Being", location: 'Middle Earth', description: 'the little fellow put on a ring, and i swear he disappeared', password: 'FrodoIsMysterious' };
   const commentFieldsToPost = { content: 'he is quite small to hold the one ring to rule them all...' };
   let postedReportResponse, postedCommentResponse;
@@ -32,14 +32,14 @@ describe('API', () => {
   afterAll(async() => {
     await client.end();
   })
-  describe('server', () => {
+  xdescribe('server', () => {
     beforeAll(async() => {
     })
     it('Responds to requests', async () => {
       await expect(axios.get(`${API_URL}/foo-bar`)).rejects.toThrow('Request failed with status code 404');
     });
   });
-  describe('GET request for /api/reports', () => {
+  xdescribe('GET request for /api/reports', () => {
     let response, allReportsResponse, allReportsQueried, singleReportResponse, singleReportQueried;
     beforeAll(async() => {
       const {data} = await axios.get(`${API_URL}/api/reports`);
@@ -74,7 +74,7 @@ describe('API', () => {
       expect(singleReportResponse.location).toEqual(singleReportQueried.location);
     });
   });
-  describe('POST request for /api/reports', () => {
+  xdescribe('POST request for /api/reports', () => {
     beforeAll(async() => {
     })
     it('on caught error, call next(error), which sends back a 500 error', async () => {
@@ -87,7 +87,7 @@ describe('API', () => {
       expect(postedReportResponse.description).toBe(reportToPost.description);
     });
   });
-  describe('POST request for /api/reports/:reportId/comments', () => {
+  xdescribe('POST request for /api/reports/:reportId/comments', () => {
     beforeAll(async() => {
     })
     it('on caught error, call next(error), which sends back a 500 error', async () => {
@@ -100,7 +100,7 @@ describe('API', () => {
       expect(postedCommentResponse.content).toBe(commentFieldsToPost.content);
     });
   });
-  describe('DELETE request for /api/reports/:reportId', () => {
+  xdescribe('DELETE request for /api/reports/:reportId', () => {
     let deleteResponse;
     beforeAll(async() => {
     })
@@ -127,7 +127,7 @@ describe('API', () => {
       expect(deleteResponse).toEqual({message: 'Report successfully closed!'});
     });
   });
-  describe('Properly handles Not Found requests', () => {
+  xdescribe('Properly handles Not Found requests', () => {
     beforeAll(async() => {
     })
     it('Sends back 404 not found', async () => {
