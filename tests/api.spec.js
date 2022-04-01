@@ -20,7 +20,7 @@ const apiSetup = async () => {
   }));
 }
 
-xdescribe('API', () => {
+describe('API', () => {
   const reportToPost = { title: "Disappearing Being", location: 'Middle Earth', description: 'the little fellow put on a ring, and i swear he disappeared', password: 'FrodoIsMysterious' };
   const commentFieldsToPost = { content: 'he is quite small to hold the one ring to rule them all...' };
   let postedReportResponse, postedCommentResponse;
@@ -32,14 +32,14 @@ xdescribe('API', () => {
   afterAll(async() => {
     await client.end();
   })
-  xdescribe('server', () => {
+  describe('server', () => {
     beforeAll(async() => {
     })
     it('Responds to requests', async () => {
       await expect(axios.get(`${API_URL}/foo-bar`)).rejects.toThrow('Request failed with status code 404');
     });
   });
-  xdescribe('GET request for /api/reports', () => {
+  describe('GET request for /api/reports', () => {
     let response, allReportsResponse, allReportsQueried, singleReportResponse, singleReportQueried;
     beforeAll(async() => {
       const {data} = await axios.get(`${API_URL}/api/reports`);
