@@ -30,17 +30,18 @@ const apiRouter = require('./api')
 server.use("/api", apiRouter)
 // Import the client from your db/index.js
 
-
-server.use((error, req, res, next) => {
-res.status(404).send(error, "Error this page doesn't exist");
- });
-// Create custom 404 handler that sets the status code to 404.
 server.use((error, req, res, next)=> {
-    res.status(500).send(error)
-    console.log(error, "500 error")
+    res.status(500).send("Request failed with status code 500")
 })
 // Create custom error handling that sets the status code to 500
 // and returns the error as an object
+
+server.use((error, req, res, next) => {
+    if(error === 404){
+res.status(404).send("Error this page doesn't exist");
+}});
+// Create custom 404 handler that sets the status code to 404.
+
 
 
 // Start the server listening on port PORT

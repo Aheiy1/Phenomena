@@ -40,7 +40,7 @@ apiRouter.post("/reports", async (req, res, next) => {
     const report = await createReport(postData);
     res.send(report);
   } catch (error) {
-    console.log(error, "for 500 error");
+    
     next({ error });
   }
 });
@@ -64,17 +64,13 @@ apiRouter.post("/reports", async (req, res, next) => {
  */
 
 apiRouter.post("/reports/:reportId/comments", async (req, res, next) => {
-  const { reportId, commentFields } = req.body;
-  const reportData = {};
+  const {reportId} = req.params
+  const { content } = req.body;
   try {
-    reportData.reportId = reportId;
-    reportData.commentFields = commentFields;
-
     const report = await createReportComment(
-      reportData.reportId,
-      reportData.commentFields
+      reportId,
+      content
     );
-    console.log(report, "create report comment");
     res.send(report);
   } catch (error) {
     next({ error });

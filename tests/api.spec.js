@@ -32,14 +32,14 @@ describe('API', () => {
   afterAll(async() => {
     await client.end();
   })
-  describe('server', () => {
+ xdescribe('server', () => {
     beforeAll(async() => {
     })
     it('Responds to requests', async () => {
       await expect(axios.get(`${API_URL}/foo-bar`)).rejects.toThrow('Request failed with status code 404');
     });
   });
-  describe('GET request for /api/reports', () => {
+  xdescribe('GET request for /api/reports', () => {
     let response, allReportsResponse, allReportsQueried, singleReportResponse, singleReportQueried;
     beforeAll(async() => {
       const {data} = await axios.get(`${API_URL}/api/reports`);
@@ -100,7 +100,7 @@ describe('API', () => {
       expect(postedCommentResponse.content).toBe(commentFieldsToPost.content);
     });
   });
-  xdescribe('DELETE request for /api/reports/:reportId', () => {
+  describe('DELETE request for /api/reports/:reportId', () => {
     let deleteResponse;
     beforeAll(async() => {
     })
@@ -127,7 +127,7 @@ describe('API', () => {
       expect(deleteResponse).toEqual({message: 'Report successfully closed!'});
     });
   });
-  xdescribe('Properly handles Not Found requests', () => {
+  describe('Properly handles Not Found requests', () => {
     beforeAll(async() => {
     })
     it('Sends back 404 not found', async () => {

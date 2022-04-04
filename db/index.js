@@ -28,18 +28,14 @@ async function getOpenReports() {
     SELECT * FROM reports
     WHERE "isOpen" = true;
  `);
-    // console.log(reports, "reports");
     const { rows: comments } = await client.query(`
     SELECT * FROM comments
     WHERE "reportId" IN( ${reports.map((report) => report.id).join(", ")});
       `);
-      console.log(comments, "comments from getopen reports")
-    console.log(reports, "New reports");
+
 
     reports.forEach((report) => {
       report.comments = comments.filter(comment => comment.reportId === report.id)
-      console.log(comments.reportId, "comments from reports")
-      // console.log(comments, "seeing how comment looks")
       report.isExpired = Date.parse(report.expirationDate) < new Date();
       delete report.password;
     });
@@ -124,7 +120,6 @@ async function _getReport(reportId) {
     SELECT * FROM reports
     WHERE id = ${reportId};
     `);
-    // console.log(report, "from helper function");
     return report;
     // SELECT the report with id equal to reportId
     // return the report
@@ -144,7 +139,6 @@ async function _getReport(reportId) {
  */
 async function closeReport(reportId, password) {
   const closedReport = await _getReport(reportId);
-  console.log(closedReport, "helper function");
   try {
     if (!closedReport) {
       throw Error("Report does not exist with that id");
@@ -187,8 +181,7 @@ async function closeReport(reportId, password) {
  */
 async function createReportComment(reportId, commentFields) {
   // read off the content from the commentFields
-  const content = commentFields.content;
-  console.log(await _getReport(reportId), "report id from create");
+  const content = commentFields;
   try {
     const report = await _getReport(reportId);
     if (!report) {
@@ -217,8 +210,6 @@ async function createReportComment(reportId, commentFields) {
       WHERE id=${reportId}
       RETURNING *;
       `);
-    // console.log(content, "ommentFields.content ");
-    // console.log(comment, "comments from reports");
 
     return comment;
     // grab the report we are going to be commenting on
